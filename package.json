@@ -7,8 +7,11 @@
   },
   "type": "module",
   "scripts": {
-    "start:prod": "node src/index.js",
-    "start:dev": "nodemon src/index.js"
+    "build": "npx tsc",
+    "start:prod": "npm run build && node build/main",
+    "start:dev": "npx nodemon",
+    "lint": "npx eslint ./src",
+    "format": "npx eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -27,15 +30,16 @@
   "homepage": "https://github.com/anika3160/simple-crud-api#readme",
   "devDependencies": {
     "eslint": "^8.56.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^18.0.0",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-prettier": "^5.2.6",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
     "nodemon": "^3.1.10",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "uuid": "^11.1.0"
