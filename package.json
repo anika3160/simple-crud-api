@@ -10,6 +10,7 @@
     "build": "npx tsc",
     "start:prod": "npm run build && node build/main",
     "start:dev": "npx nodemon",
+    "start:multi": "npm run build && node build/multi",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix"
   },
