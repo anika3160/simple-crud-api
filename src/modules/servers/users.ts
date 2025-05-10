@@ -25,6 +25,7 @@ const createUsersServer = () => {
   return http.createServer(async (req, res) => {
     let users: IUser[] = await getListOfUsers()
     const sendResponse = (statusCode: number, contentType: string, data?: any): void => {
+      console.log(`Response status: ${statusCode} for ${req.method} ${req.url}`)
       res.writeHead(statusCode, {
         'Content-Type': contentType,
       })

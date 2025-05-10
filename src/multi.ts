@@ -1,20 +1,31 @@
 import * as dotenv from 'dotenv'
 import cluster from 'node:cluster'
-import process from 'node:process'
 import os from 'node:os'
-import createUsersServer from './modules/servers/users.js'
+import process from 'node:process'
+import { IUser } from './modules/database/database.js'
 import createProxyServer from './modules/servers/proxy.js'
-import { updateUsersData } from './modules/database/database.js'
+import createUsersServer from './modules/servers/users.js'
+import { IPCMessageType } from './modules/constants.js';
 
 dotenv.config()
 const PORT: number = Number(process.env.PORT) || 3000
 const numCPUs: number = os.cpus().length
+let users: IUser[] = []
 
 if (cluster.isPrimary) {
   console.log(`Primary ${process.pid} is running`)
-  await updateUsersData([])
+
   for (let i = 0; i < numCPUs; i++) {
-    cluster.fork()
+    const worker = cluster.fork()
+
+    worker.on('message', (msg) => {
+      if (msg.type === IPCMessageType.GetUsers) {
+        worker.send({ type: IPCMessageType.SetUsers, users })
+      }
+      if (msg.type === IPCMessageType.SetUsers) {
+        users = msg.users
+      }
+    })
   }
 
   cluster.on('exit', (worker) => {
@@ -36,5 +47,4 @@ if (cluster.isPrimary) {
   usersServer.on('error', (err: any) => {
     console.log(err)
   })
-  // console.log(`Worker ${process.pid} started`);
 }
