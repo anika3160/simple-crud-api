@@ -1,15 +1,11 @@
-export const isValidName = (name: any): boolean => {
-  return typeof name === 'string' && name !== ''
+export const isValidUsername = (username: unknown): username is string => {
+  return typeof username === 'string' && username.trim() !== ''
 }
 
-export const isValidAge = (age: any): boolean => {
-  return typeof age === 'number' && age === age
+export const isValidAge = (age: unknown): age is number => {
+  return typeof age === 'number' && Number.isInteger(age) && age > 0
 }
 
-export const isValidHobbies = (hobbies: any): boolean => {
-  if (Array.isArray(hobbies)) {
-    const onlyStringHobbies: any = hobbies.filter((hobby) => typeof hobby === 'string')
-    return hobbies.length === 0 || onlyStringHobbies.length === hobbies.length
-  }
-  return false
+export const isValidHobbies = (hobbies: unknown): hobbies is string[] => {
+  return Array.isArray(hobbies) && hobbies.every((hobby): hobby is string => typeof hobby === 'string')
 }
