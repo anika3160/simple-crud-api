@@ -1,7 +1,8 @@
+import { beforeAll, describe, expect, test } from '@jest/globals'
 import request from 'supertest'
-import { describe, expect, test, beforeAll } from '@jest/globals'
+import { updateUsersData } from '../modules/db/db.js'
 import createUsersServer from '../modules/servers/users.js'
-import { updateUsersData } from '../modules/database/database.js'
+import { BASE_USERS_URL } from '../types/constants.js'
 
 const server = createUsersServer()
 
@@ -17,12 +18,12 @@ beforeAll(async () => {
 
 describe('1 scenario', () => {
   test('Get empty list', async() => {
-      const response = await request(server).get('/api/users')
+      const response = await request(server).get(BASE_USERS_URL)
       expect(response.statusCode).toBe(200)
       expect(response.body).toStrictEqual([])
   })
   test('Create User', async () => {
-    const response = await request(server).post('/api/users').send(user)
+    const response = await request(server).post(BASE_USERS_URL).send(user)
     expect(response.statusCode).toBe(201)
     expect(response.body.username).toStrictEqual(user.username)
     expect(response.body.age).toStrictEqual(user.age)
@@ -31,7 +32,7 @@ describe('1 scenario', () => {
 })
 
   test('Get user by id', async() => {
-    const response = await request(server).get('/api/users')
+    const response = await request(server).get(BASE_USERS_URL)
     const userResponse = await request(server).get(`/api/users/${response.body[0].id}`)
     expect(userResponse.body.username).toStrictEqual(user.username)
     expect(userResponse.body.age).toStrictEqual(user.age)
@@ -39,7 +40,7 @@ describe('1 scenario', () => {
     expect(userResponse.body.id).toBeDefined()
 })
   test('Update user', async() => {
-    const response = await request(server).get('/api/users')
+    const response = await request(server).get(BASE_USERS_URL)
     const userResponse = await request(server).put(`/api/users/${response.body[0].id}`).send({
       username: "baby",
       age: user.age,
@@ -53,13 +54,13 @@ describe('1 scenario', () => {
 })
 
 test('Delete user', async() => {
-  const response = await request(server).get('/api/users')
+  const response = await request(server).get(BASE_USERS_URL)
   const userResponse = await request(server).delete(`/api/users/${response.body[0].id}`)
   expect(userResponse.statusCode).toBe(204)
 })
 
 test('Get empty list', async() => {
-  const response = await request(server).get('/api/users')
+  const response = await request(server).get(BASE_USERS_URL)
   expect(response.statusCode).toBe(200)
   expect(response.body).toStrictEqual([])
 })

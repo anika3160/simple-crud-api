@@ -1,25 +1,7 @@
 import http from 'http'
 import { validate as uuidValidate } from 'uuid'
-import { getUserById, createOrUpdateUser, getListOfUsers, updateUsersData } from '../database/database.js'
-
-interface IUser {
-  readonly id: string
-  username: string
-  age: number
-  hobbies: string[]
-}
-
-enum ContentType {
-  text = 'text/html',
-  json = 'application/json',
-}
-
-enum Method {
-  get = 'GET',
-  post = 'POST',
-  put = 'PUT',
-  delete = 'DELETE',
-}
+import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from '../db/db.js'
+import { IUser, ContentType, Method, BASE_USERS_URL } from '../../types/constants.js'
 
 const createUsersServer = () => {
   return http.createServer(async (req, res) => {
@@ -38,7 +20,7 @@ const createUsersServer = () => {
       console.log(`Server request ${req.url} ${req.method}`)
 
       const routesEl: string[] | undefined = req.url?.split('/')
-      if (req.url === '/api/users') {
+      if (req.url === BASE_USERS_URL) {
         switch (req.method) {
           case Method.get: {
             sendResponse(200, ContentType.json, users)
@@ -66,7 +48,7 @@ const createUsersServer = () => {
             sendResponse(500, ContentType.text, 'Method deprecated.')
             break
         }
-      } else if (req.url?.indexOf('/api/users/') === 0 && routesEl?.length === 4) {
+      } else if (req.url?.indexOf(BASE_USERS_URL + '/') === 0 && routesEl?.length === 4) {
         const isValidId = uuidValidate(routesEl[3])
         const currentUser = getUserById(routesEl[3], users)
 

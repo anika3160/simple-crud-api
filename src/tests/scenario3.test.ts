@@ -1,7 +1,8 @@
+import { beforeAll, describe, expect, test } from '@jest/globals'
 import request from 'supertest'
-import { describe, expect, test, beforeAll } from '@jest/globals'
+import { updateUsersData } from '../modules/db/db.js'
 import createUsersServer from '../modules/servers/users.js'
-import { updateUsersData } from '../modules/database/database.js'
+import { BASE_USERS_URL } from '../types/constants.js'
 
 const server = createUsersServer()
 
@@ -18,12 +19,12 @@ beforeAll(async () => {
 
 describe('3 scenario', () => {
   test('Get empty list', async() => {
-      const response = await request(server).get('/api/users')
+      const response = await request(server).get(BASE_USERS_URL)
       expect(response.statusCode).toBe(200)
       expect(response.body).toStrictEqual([])
   })
   test('Create first User', async () => {
-    const response = await request(server).post('/api/users').send(user)
+    const response = await request(server).post(BASE_USERS_URL).send(user)
     expect(response.statusCode).toBe(201)
     expect(response.body.username).toStrictEqual(user.username)
     expect(response.body.age).toStrictEqual(user.age)
@@ -31,7 +32,7 @@ describe('3 scenario', () => {
     expect(response.body.id).toBeDefined()
 })
 test('Create second User', async () => {
-    const response = await request(server).post('/api/users').send(user)
+    const response = await request(server).post(BASE_USERS_URL).send(user)
     expect(response.statusCode).toBe(201)
     expect(response.body.username).toStrictEqual(user.username)
     expect(response.body.age).toStrictEqual(user.age)
@@ -40,7 +41,7 @@ test('Create second User', async () => {
 })
 
 test('Update first user', async() => {
-    const response = await request(server).get('/api/users')
+    const response = await request(server).get(BASE_USERS_URL)
     const userResponse = await request(server).put(`/api/users/${response.body[0].id}`).send({
       username: "baby",
       age: user.age,
@@ -55,7 +56,7 @@ test('Update first user', async() => {
 
 
 test('Get list with two users', async() => {
-  const response = await request(server).get('/api/users')
+  const response = await request(server).get(BASE_USERS_URL)
   expect(response.statusCode).toBe(200)
   expect(response.body.length).toStrictEqual(2)
 })

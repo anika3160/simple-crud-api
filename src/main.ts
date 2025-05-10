@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
+import { updateUsersData } from './modules/db/db.js'
 import createUsersServer from './modules/servers/users.js'
-import { updateUsersData } from './modules/database/database.js'
 
 dotenv.config()
 const PORT: number = Number(process.env.PORT) || 3000

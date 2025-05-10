@@ -1,15 +1,9 @@
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid'
-import { isValidAge, isValidHobbies, isValidUsername } from './validators.js'
+import { IPCMessageType } from '../../types/constants.js'
 import read from './read.js'
+import { isValidAge, isValidHobbies, isValidUsername } from './validators.js'
 import write from './write.js'
-import { IPCMessageType } from '../constants.js'
-
-export interface IUser {
-  readonly id: string
-  username: string
-  age: number
-  hobbies: string[]
-}
+import { IUser } from '../../types/constants.js'
 
 const useMemory = process.env.USE_INMEMORY_DB === 'true'
 let memoryUsers: IUser[] = []

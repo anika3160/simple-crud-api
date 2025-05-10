@@ -2,10 +2,10 @@ import * as dotenv from 'dotenv'
 import cluster from 'node:cluster'
 import os from 'node:os'
 import process from 'node:process'
-import { IUser } from './modules/database/database.js'
+import { IUser } from './types/constants.js'
 import createProxyServer from './modules/servers/proxy.js'
 import createUsersServer from './modules/servers/users.js'
-import { IPCMessageType } from './modules/constants.js';
+import { IPCMessageType } from './types/constants.js'
 
 dotenv.config()
 const PORT: number = Number(process.env.PORT) || 3000
