@@ -13,7 +13,7 @@ function getUsersIPC(): Promise<IUser[]> {
   return new Promise((resolve) => {
     process.send?.({ type: IPCMessageType.GetUsers })
     const handler = (msg: any) => {
-      if (msg.type === 'users') {
+      if (msg.type === IPCMessageType.SetUsers) {
         process.off('message', handler)
         resolve(msg.users)
       }
