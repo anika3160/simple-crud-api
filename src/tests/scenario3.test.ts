@@ -1,0 +1,63 @@
+import { beforeAll, describe, expect, test } from '@jest/globals'
+import request from 'supertest'
+import { updateUsersData } from '../modules/db/db.js'
+import createUsersServer from '../modules/servers/users.js'
+import { BASE_USERS_URL } from '../types/constants.js'
+
+const server = createUsersServer()
+
+const user = {
+  username: 'Anna',
+  age: 27,
+  hobbies: ['ski', 'codding'],
+}
+
+beforeAll(async () => {
+  await updateUsersData([])
+});
+
+
+describe('3 scenario', () => {
+  test('Get empty list', async() => {
+      const response = await request(server).get(BASE_USERS_URL)
+      expect(response.statusCode).toBe(200)
+      expect(response.body).toStrictEqual([])
+  })
+  test('Create first User', async () => {
+    const response = await request(server).post(BASE_USERS_URL).send(user)
+    expect(response.statusCode).toBe(201)
+    expect(response.body.username).toStrictEqual(user.username)
+    expect(response.body.age).toStrictEqual(user.age)
+    expect(response.body.hobbies).toStrictEqual(user.hobbies)
+    expect(response.body.id).toBeDefined()
+})
+test('Create second User', async () => {
+    const response = await request(server).post(BASE_USERS_URL).send(user)
+    expect(response.statusCode).toBe(201)
+    expect(response.body.username).toStrictEqual(user.username)
+    expect(response.body.age).toStrictEqual(user.age)
+    expect(response.body.hobbies).toStrictEqual(user.hobbies)
+    expect(response.body.id).toBeDefined()
+})
+
+test('Update first user', async() => {
+    const response = await request(server).get(BASE_USERS_URL)
+    const userResponse = await request(server).put(`/api/users/${response.body[0].id}`).send({
+      username: "baby",
+      age: user.age,
+      hobbies: user.hobbies
+    })
+    expect(userResponse.statusCode).toBe(200)
+    expect(userResponse.body.username).toStrictEqual("baby")
+    expect(userResponse.body.age).toStrictEqual(user.age)
+    expect(userResponse.body.hobbies).toStrictEqual(user.hobbies)
+    expect(userResponse.body.id).toBeDefined()
+  })
+
+
+test('Get list with two users', async() => {
+  const response = await request(server).get(BASE_USERS_URL)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.length).toStrictEqual(2)
+})
+})
