@@ -1,21 +1,26 @@
 # CRUD API
 
-## Common:
+## Common
+
 1. Clone this repository.
 2. Paste into console: `git checkout development` and press enter.
 3. Paste into console: `npm install` and press enter.
 4. Rename `.env.example` to `.env`and put your `PORT`.
 
-## Development: 
+## Development
+
 5. Paste into console: `npm run start:dev` and press enter.
 
-## Development multi:
+## Development multi
+
 5. Paste into console: `npm run start:multi` and press enter.
 
-## Production:
+## Production
+
 5. Paste into console: `npm run start:prod` and press enter.
 
-## Tests:
+## Tests
+
 5. Paste into console: `npm run test` and press enter.
 
 Users are stored as `objects` that have the following structure:
