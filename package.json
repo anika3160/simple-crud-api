@@ -12,7 +12,7 @@
     "start:prod": "webpack --config webpack.config.cjs && node dist/bundle.js",
     "start:multi": "npm run build && node build/multi",
     "lint": "eslint . --ext .ts,.cjs",
-    "lint:fix": "eslint .--ext .ts,.cjs --fix",
+    "lint:fix": "eslint . --ext .ts,.cjs --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"

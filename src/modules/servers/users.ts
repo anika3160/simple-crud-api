@@ -1,111 +1,119 @@
-import http from 'http'
-import { validate as uuidValidate } from 'uuid'
-import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from '../db/db.js'
-import { IUser, ContentType, Method, BASE_USERS_URL } from '../../types/constants.js'
+import http from "http";
+import { validate as uuidValidate } from "uuid";
+import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from "../db/db.js";
+import { IUser, ContentType, Method, BASE_USERS_URL } from "../../types/constants.js";
 
 const createUsersServer = () => {
   return http.createServer(async (req, res) => {
-    let users: IUser[] = await getListOfUsers()
+    let users: IUser[] = await getListOfUsers();
     const sendResponse = (statusCode: number, contentType: string, data?: any): void => {
-      console.log(`Response status: ${statusCode} for ${req.method} ${req.url}`)
+      console.log(`Response status: ${statusCode} for ${req.method} ${req.url}`);
       res.writeHead(statusCode, {
-        'Content-Type': contentType,
-      })
+        "Content-Type": contentType,
+      });
       if (data) {
-        res.write(typeof data === 'string' ? data : JSON.stringify(data))
+        res.write(typeof data === "string" ? data : JSON.stringify(data));
       }
-      res.end()
-    }
+      res.end();
+    };
     try {
-      console.log(`Server request ${req.url} ${req.method}`)
+      console.log(`Server request ${req.url} ${req.method}`);
 
-      const routesEl: string[] | undefined = req.url?.split('/')
+      const routesEl: string[] | undefined = req.url?.split("/");
       if (req.url === BASE_USERS_URL) {
         switch (req.method) {
           case Method.get: {
-            sendResponse(200, ContentType.json, users)
-            break
+            sendResponse(200, ContentType.json, users);
+            break;
           }
           case Method.post: {
-            let data = ''
-            req.on('data', (chunk) => {
-              data += chunk
-            })
-            req.on('end', () => {
+            let data = "";
+            req.on("data", (chunk) => {
+              data += chunk;
+            });
+            req.on("end", () => {
               try {
-                const dataFromReq = data ? JSON.parse(data) : undefined
-                const newUser: IUser = createOrUpdateUser(dataFromReq?.username, dataFromReq?.age, dataFromReq?.hobbies)
-                users.push(newUser)
-                updateUsersData(users)
-                sendResponse(201, ContentType.json, newUser)
+                const dataFromReq = data ? JSON.parse(data) : undefined;
+                const newUser: IUser = createOrUpdateUser(
+                  dataFromReq?.username,
+                  dataFromReq?.age,
+                  dataFromReq?.hobbies,
+                );
+                users.push(newUser);
+                updateUsersData(users);
+                sendResponse(201, ContentType.json, newUser);
               } catch (error: any) {
-                sendResponse(400, ContentType.text, error.message)
+                sendResponse(400, ContentType.text, error.message);
               }
-            })
-            break
+            });
+            break;
           }
           default:
-            sendResponse(500, ContentType.text, 'Method deprecated.')
-            break
+            sendResponse(500, ContentType.text, "Method deprecated.");
+            break;
         }
-      } else if (req.url?.indexOf(BASE_USERS_URL + '/') === 0 && routesEl?.length === 4) {
-        const isValidId = uuidValidate(routesEl[3])
-        const currentUser = getUserById(routesEl[3], users)
+      } else if (req.url?.indexOf(BASE_USERS_URL + "/") === 0 && routesEl?.length === 4) {
+        const isValidId = uuidValidate(routesEl[3]);
+        const currentUser = getUserById(routesEl[3], users);
 
         if (isValidId) {
           if (currentUser) {
             switch (req.method) {
               case Method.get: {
-                sendResponse(200, ContentType.json, currentUser)
-                break
+                sendResponse(200, ContentType.json, currentUser);
+                break;
               }
               case Method.put: {
-                let data = ''
-                req.on('data', (chunk) => {
-                  data += chunk
-                })
-                req.on('end', () => {
+                let data = "";
+                req.on("data", (chunk) => {
+                  data += chunk;
+                });
+                req.on("end", () => {
                   try {
-                    const dataFromReq = data ? JSON.parse(data) : undefined
+                    const dataFromReq = data ? JSON.parse(data) : undefined;
                     const newUserData: IUser = createOrUpdateUser(
                       dataFromReq?.username,
                       dataFromReq?.age,
                       dataFromReq?.hobbies,
                       routesEl[3],
-                    )
-                    users = users.filter((user) => user.id !== routesEl[3])
-                    users.push(newUserData)
-                    updateUsersData(users)
-                    sendResponse(200, ContentType.json, newUserData)
+                    );
+                    users = users.filter((user) => user.id !== routesEl[3]);
+                    users.push(newUserData);
+                    updateUsersData(users);
+                    sendResponse(200, ContentType.json, newUserData);
                   } catch (error: any) {
-                    sendResponse(400, ContentType.text, error.message)
+                    sendResponse(400, ContentType.text, error.message);
                   }
-                })
-                break
+                });
+                break;
               }
               case Method.delete: {
-                users = users.filter((user) => user.id !== routesEl[3])
-                updateUsersData(users)
-                sendResponse(204, ContentType.text)
-                break
+                users = users.filter((user) => user.id !== routesEl[3]);
+                updateUsersData(users);
+                sendResponse(204, ContentType.text);
+                break;
               }
               default:
-                sendResponse(500, ContentType.text, 'Method deprecated.')
-                break
+                sendResponse(500, ContentType.text, "Method deprecated.");
+                break;
             }
           } else {
-            sendResponse(404, ContentType.text, `Record with ${routesEl[3]} === userID doesn't exist`)
+            sendResponse(
+              404,
+              ContentType.text,
+              `Record with ${routesEl[3]} === userID doesn't exist`,
+            );
           }
         } else {
-          sendResponse(400, ContentType.text, 'User id is invalid (not uuid).')
+          sendResponse(400, ContentType.text, "User id is invalid (not uuid).");
         }
       } else {
-        sendResponse(404, ContentType.text, 'Unknown URL.')
+        sendResponse(404, ContentType.text, "Unknown URL.");
       }
     } catch (error: any) {
-      sendResponse(500, ContentType.text, error.message)
+      sendResponse(500, ContentType.text, error.message);
     }
-  })
-}
+  });
+};
 
-export default createUsersServer
+export default createUsersServer;
