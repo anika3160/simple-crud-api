@@ -1,10 +1,10 @@
 import http from "http";
 import { validate as uuidValidate } from "uuid";
+import { BASE_USERS_URL, ContentType, IUser, Method } from "../../types/constants.js";
 import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from "../db/db.js";
-import { IUser, ContentType, Method, BASE_USERS_URL } from "../../types/constants.js";
 
-const createUsersServer = () => {
-  return http.createServer(async (req, res) => {
+const createUsersServer = () =>
+  http.createServer(async (req, res) => {
     let users: IUser[] = await getListOfUsers();
     const sendResponse = (statusCode: number, contentType: string, data?: any): void => {
       console.log(`Response status: ${statusCode} for ${req.method} ${req.url}`);
@@ -40,7 +40,7 @@ const createUsersServer = () => {
                   dataFromReq?.hobbies,
                 );
                 users.push(newUser);
-                updateUsersData(users);
+                updateUsersData([...users]);
                 sendResponse(201, ContentType.json, newUser);
               } catch (error: any) {
                 sendResponse(400, ContentType.text, error.message);
@@ -114,6 +114,5 @@ const createUsersServer = () => {
       sendResponse(500, ContentType.text, error.message);
     }
   });
-};
 
 export default createUsersServer;

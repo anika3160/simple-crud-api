@@ -44,7 +44,7 @@ if (cluster.isPrimary) {
     console.log(`Server is running on port ${workerPort}`);
   });
 
-  usersServer.on("error", (err: any) => {
+  usersServer.on("error", (err) => {
     console.log(err);
   });
 }

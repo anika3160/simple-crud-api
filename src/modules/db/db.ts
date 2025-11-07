@@ -1,11 +1,8 @@
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 import { IPCMessageType, IUser } from "../../types/constants.js";
-import read from "./read.js";
 import { isValidAge, isValidHobbies, isValidUsername } from "./validators.js";
-import write from "./write.js";
 
-const useMemory = process.env.USE_IN_MEMORY_DB === "true";
-const memoryUsers: IUser[] = [];
+export const db: IUser[] = [];
 const isClusterWorker = !!process.send;
 
 function getUsersIPC(): Promise<IUser[]> {
@@ -46,26 +43,19 @@ export const createOrUpdateUser = (
 };
 
 export const getListOfUsers = async () => {
-  if (useMemory) {
-    if (isClusterWorker) {
-      return await getUsersIPC();
-    }
-    return memoryUsers;
+  if (isClusterWorker) {
+    console.log("Fetching users via IPC...");
+    return await getUsersIPC();
   }
-  const data: string = await read();
-  const users: IUser[] = JSON.parse(data).users;
-  return users;
+  return db;
 };
 
 export const updateUsersData = async (users: IUser[]) => {
-  if (useMemory) {
-    if (isClusterWorker) {
-      setUsersIPC(users);
-      return;
-    }
-    memoryUsers.length = 0;
-    memoryUsers.push(...JSON.parse(JSON.stringify(users)));
+  if (isClusterWorker) {
+    setUsersIPC(users);
     return;
   }
-  await write(JSON.stringify({ users }));
+  db.length = 0;
+  db.push(...JSON.parse(JSON.stringify(users)));
+  return;
 };
