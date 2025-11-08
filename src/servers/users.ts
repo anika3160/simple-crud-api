@@ -1,6 +1,6 @@
 import http from "http";
 import { validate as uuidValidate } from "uuid";
-import { createOrUpdateUser, getUserById, getUsersList, updateUsersData } from "../db/db.js";
+import { createUser, getUserById, getUsersList, updateUser, updateUsersData } from "../db/db.js";
 import { BASE_USERS_URL, ContentType, IUser, Method } from "../types/constants.js";
 
 const createUsersServer = () =>
@@ -34,7 +34,7 @@ const createUsersServer = () =>
             req.on("end", () => {
               try {
                 const dataFromReq = data ? JSON.parse(data) : undefined;
-                const newUser: IUser = createOrUpdateUser(
+                const newUser: IUser = createUser(
                   dataFromReq?.username,
                   dataFromReq?.age,
                   dataFromReq?.hobbies,
@@ -71,7 +71,7 @@ const createUsersServer = () =>
                 req.on("end", () => {
                   try {
                     const dataFromReq = data ? JSON.parse(data) : undefined;
-                    const newUserData: IUser = createOrUpdateUser(
+                    const newUserData: IUser = updateUser(
                       dataFromReq?.username,
                       dataFromReq?.age,
                       dataFromReq?.hobbies,
