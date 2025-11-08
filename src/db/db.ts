@@ -1,5 +1,5 @@
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
-import { IPCMessageType, IUser } from "../../types/constants.js";
+import { IPCMessageType, IUser } from "../types/constants.js";
 import { isValidAge, isValidHobbies, isValidUsername } from "./validators.js";
 
 export const db: IUser[] = [];

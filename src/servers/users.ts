@@ -1,7 +1,7 @@
 import http from "http";
 import { validate as uuidValidate } from "uuid";
-import { BASE_USERS_URL, ContentType, IUser, Method } from "../../types/constants.js";
 import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from "../db/db.js";
+import { BASE_USERS_URL, ContentType, IUser, Method } from "../types/constants.js";
 
 const createUsersServer = () =>
   http.createServer(async (req, res) => {

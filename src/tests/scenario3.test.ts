@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, test } from "@jest/globals";
 import request from "supertest";
-import { updateUsersData } from "../modules/db/db.js";
-import createUsersServer from "../modules/servers/users.js";
+import { updateUsersData } from "../db/db.js";
+import createUsersServer from "../servers/users.js";
 import { BASE_USERS_URL } from "../types/constants.js";
 
 const server = createUsersServer();

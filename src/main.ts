@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import createUsersServer from "./modules/servers/users.js";
+import createUsersServer from "./servers/users.js";
 
 dotenv.config();
 const PORT: number = Number(process.env.PORT) || 3000;
