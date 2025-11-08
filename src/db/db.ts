@@ -1,26 +1,10 @@
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
-import { IPCMessageType, IUser } from "../types/constants.js";
+import { IUser } from "../types/constants.js";
+import { getUsersIPC, setUsersIPC } from "./ipc.js";
 import { isValidAge, isValidHobbies, isValidUsername } from "./validators.js";
 
 export const db: IUser[] = [];
 const isClusterWorker = !!process.send;
-
-function getUsersIPC(): Promise<IUser[]> {
-  return new Promise((resolve) => {
-    process.send?.({ type: IPCMessageType.GetUsers });
-    const handler = (msg: any) => {
-      if (msg.type === IPCMessageType.SetUsers) {
-        process.off("message", handler);
-        resolve(msg.users);
-      }
-    };
-    process.on("message", handler);
-  });
-}
-
-function setUsersIPC(users: IUser[]): void {
-  process.send?.({ type: "setUsers", users });
-}
 
 export const getUserById = (id: string, users: IUser[]): IUser | undefined =>
   users.find((user) => user.id === id);
@@ -42,7 +26,7 @@ export const createOrUpdateUser = (
   throw new Error("Incorrect data. Please try again with correct data.");
 };
 
-export const getListOfUsers = async () => {
+export const getUsersList = async () => {
   if (isClusterWorker) {
     console.log("Fetching users via IPC...");
     return await getUsersIPC();

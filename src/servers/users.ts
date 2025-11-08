@@ -1,11 +1,11 @@
 import http from "http";
 import { validate as uuidValidate } from "uuid";
-import { createOrUpdateUser, getListOfUsers, getUserById, updateUsersData } from "../db/db.js";
+import { createOrUpdateUser, getUserById, getUsersList, updateUsersData } from "../db/db.js";
 import { BASE_USERS_URL, ContentType, IUser, Method } from "../types/constants.js";
 
 const createUsersServer = () =>
   http.createServer(async (req, res) => {
-    let users: IUser[] = await getListOfUsers();
+    let users: IUser[] = await getUsersList();
     const sendResponse = (statusCode: number, contentType: string, data?: any): void => {
       console.log(`Response status: ${statusCode} for ${req.method} ${req.url}`);
       res.writeHead(statusCode, {
