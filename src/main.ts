@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import createUsersServer from "./servers/users.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 const PORT: number = Number(process.env.PORT) || 3000;
 
 const server = createUsersServer();

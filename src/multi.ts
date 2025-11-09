@@ -6,7 +6,7 @@ import createProxyServer from "./servers/proxy.js";
 import createUsersServer from "./servers/users.js";
 import { IPCMessageType, IUser } from "./types/constants.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 const PORT: number = Number(process.env.PORT) || 3000;
 const numCPUs: number = os.cpus().length;
 let users: IUser[] = [];
