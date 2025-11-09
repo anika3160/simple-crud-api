@@ -7,7 +7,6 @@ const createProxyServer = (PORT: number, numCPUs: number) =>
     countOfReq++;
     const port: number = (countOfReq % numCPUs) + PORT + 1;
     console.log("\nRedirect request to port:", port);
-    console.log("\n");
     const options = {
       port,
       method: clientReq.method,

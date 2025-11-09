@@ -3,40 +3,42 @@ import { IUser } from "../types/constants.js";
 import { isValidAge, isValidHobbies, isValidUsername } from "../utils/validators.js";
 import { getUsersIPC, setUsersIPC } from "./ipc.js";
 
-export const db: IUser[] = [];
+const db: IUser[] = [];
+
 const isClusterWorker = !!process.send;
 
 export const getUserById = (id: string, users: IUser[]): IUser | undefined =>
   users.find((user) => user.id === id);
 
-export const createUser = (username: string, age: number, hobbies: string[]): IUser => {
+export const createUser = (username: string, age: number, hobbies: string[] = []): IUser => {
   if (isValidUsername(username) && isValidAge(age) && isValidHobbies(hobbies)) {
-    return { id: uuidv4(), username, age, hobbies };
+    return { id: uuidv4(), username, age, hobbies: [...hobbies] };
   }
   throw new Error("Incorrect data. Please try again with correct data.");
 };
 
 export const updateUser = (username: string, age: number, hobbies: string[], id: string): IUser => {
   if (uuidValidate(id) && isValidUsername(username) && isValidAge(age) && isValidHobbies(hobbies)) {
-    return { id, username, age, hobbies };
+    return { id, username, age, hobbies: [...hobbies] };
   }
   throw new Error("Incorrect data. Please try again with correct data.");
 };
 
 export const getUsersList = async () => {
   if (isClusterWorker) {
-    console.log("Fetching users via IPC...");
     return await getUsersIPC();
   }
-  return db;
+  return db.map((user) => ({ ...user, hobbies: [...user.hobbies] }));
 };
 
-export const updateUsersData = async (users: IUser[]) => {
+export const updateUsersData = (users: IUser[]): void => {
   if (isClusterWorker) {
     setUsersIPC(users);
     return;
   }
   db.length = 0;
-  db.push(...JSON.parse(JSON.stringify(users)));
+  for (const user of users) {
+    db.push({ ...user, hobbies: [...user.hobbies] });
+  }
   return;
 };
