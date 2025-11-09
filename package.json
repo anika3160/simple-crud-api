@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "nodemon",
-    "start:prod": "webpack --config webpack.config.cjs && node dist/bundle.js",
+    "start:prod": "webpack --config webpack.config.cjs && node dist/bundle.mjs",
     "start:multi": "npm run build && node build/multi",
     "lint": "eslint . --ext .ts,.cjs",
     "lint:fix": "eslint . --ext .ts,.cjs --fix",

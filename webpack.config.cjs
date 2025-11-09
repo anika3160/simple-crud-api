@@ -1,48 +1,23 @@
-const path = require('path')
-const { DefinePlugin, NormalModuleReplacementPlugin } = require('webpack')
-const dotenv = require('dotenv')
+const path = require("path");
 
 module.exports = {
-  entry: './src/main.ts',
-  mode: 'production',
-  target: 'node',
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        enforce: 'pre',
-        loader: 'ts-loader',
-        options: {
-          configFile: 'tsconfig.json',
-        },
-      },
-    ],
+  mode: "production",
+  target: "node",
+  entry: "./src/main.ts",
+  experiments: { outputModule: true },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.mjs",
+    module: true,
   },
-  plugins: [
-    new DefinePlugin({
-      PORT: JSON.stringify(dotenv.config().parsed.PORT),
-    }),
-    new NormalModuleReplacementPlugin(new RegExp(/^\..+\.js$/), function (resource) {
-      resource.request = resource.request.replace(new RegExp(/\.js$/), '')
-    }),
-  ],
   resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    fallback: {
-      fs: false,
-      path: false,
-      os: false,
-      http: false,
+    extensions: [".ts", ".js", ".mjs"],
+    extensionAlias: {
+      ".js": [".ts", ".js"],
     },
   },
-  experiments: {
-    topLevelAwait: true,
-    outputModule: true,
+  module: {
+    rules: [{ test: /\.ts$/, use: "ts-loader", exclude: /node_modules/ }],
   },
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,
-    chunkFormat: 'module',
-  },
-}
+  devtool: false,
+};
