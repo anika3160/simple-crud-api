@@ -5,12 +5,12 @@ import { getUsersIPC, setUsersIPC } from "./ipc.js";
 
 const db: IUser[] = [];
 
-const isClusterWorker = !!process.send;
+const isClusterWorker = typeof process.send === "function" && !process.env.JEST_WORKER_ID;
 
 export const getUserById = (id: string, users: IUser[]): IUser | undefined =>
   users.find((user) => user.id === id);
 
-export const createUser = (username: string, age: number, hobbies: string[] = []): IUser => {
+export const createUser = (username: string, age: number, hobbies: string[]): IUser => {
   if (isValidUsername(username) && isValidAge(age) && isValidHobbies(hobbies)) {
     return { id: uuidv4(), username, age, hobbies: [...hobbies] };
   }
